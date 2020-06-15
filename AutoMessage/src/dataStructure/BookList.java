@@ -6,25 +6,37 @@ import coreutils.Browser;
 public class BookList {
 
 	private static ArrayList<BookRecord> list = new ArrayList<BookRecord>();
-	private static ArrayList<String> bookName = new ArrayList<String>();
+	private static ArrayList<String> bookNameList = new ArrayList<String>();
 	public BookList () {
 		
 	}
 	
-	public static void updateRecordToList(BookRecord record) {
-		if (bookName.equals(null)) {
-			list.add(record);
-			bookName.add(record.getBookName());
-			
-		}else if (!bookName.contains(record.getBookName())) {
-			list.add(record);
-			bookName.add(record.getBookName());
+	public static boolean updateRecordToList(BookRecord record) {
+		/**
+		 * This method will update the input record to the list of BookRecords.
+		 * If no records with a matching bookname is found, the new book is added to the list
+		 * The method will return true if the record is a new book and list size has been incremented,
+		 * It will return false otherwise
+		 * 
+		 * @param: record - the input record containing the most up-to-date attribute info
+		 **/
+		if (!record.getBookName().equals("")) {	//check input record is not an empty/error row
+			if (bookNameList.equals(null)) {	//if no book is present in list, add the first book
+				list.add(record);
+				bookNameList.add(record.getBookName());
+				return true;
+				
+			}else if (!bookNameList.contains(record.getBookName())) {
+				list.add(record);
+				bookNameList.add(record.getBookName());
+				return true;
+			}
+			else {
+				list.get(findItemBy("bookName", record.getBookName())).update(record);
+				return false;
+			}
 		}
-		else {
-			list.get(findItemBy("bookName", record.getBookName())).update(record);
-
-		}
-
+		return false;
 	}
 	
 	public static int findItemBy (String field, String searchValue) {
@@ -76,5 +88,14 @@ public class BookList {
 		return list;
 	}
 	
+	public static ArrayList<BookRecord> getBookFromAuthor(String author) {
+		ArrayList<BookRecord> bookByAuthor = new ArrayList<BookRecord> ();
+		for (int i = 0; i<list.size(); i++) {
+			if (list.get(i).getFieldValue("author").equals(author)) {
+				bookByAuthor.add(list.get(i));
+			}
+		}
+		return bookByAuthor;
+	}
 
 }

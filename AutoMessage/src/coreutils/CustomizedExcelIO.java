@@ -43,15 +43,19 @@ public class CustomizedExcelIO {
 	    int i = 0;
 	    ArrayList<String> fields = new ArrayList<String> ();
 	    while ((nextRecord = csvReader.readNext()) != null) { 
+    		BookRecord br = new BookRecord();
     		for (int j=0; j<nextRecord.length;j++) {
-    			if (i==0) {
+/*    			if (i==0) {
     				fields.add(nextRecord[j]);
 	    			}
-	    		else if (i>0 && nextRecord[0].equals("1")) {		//ignore title row(i==0) and inactive row (nextRecord[0]!=1)
-	    		BookRecord br = new BookRecord();
-	    			br.setFieldValue(fields.get(j), nextRecord[j]);
-		    	BookList.updateRecordToList(br);
+	    		else */
+    			if (i>0) {		//ignore title row(i==0) and inactive row (nextRecord[0]!=1)
+	    			br.setFieldValue(br.getFieldList()[j], nextRecord[j]);
 	    		}//if
+    		}
+    		if (i>0) {
+	    	BookList.updateRecordToList(br);
+	    	System.out.println("BookList updated, list size is: " + BookList.getlist().size());
     		}
 	        i++;
 	    }
